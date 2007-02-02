@@ -61,35 +61,8 @@ BEGIN {
     }
 }
 
-sub _guess_class {
-    return $CLASS if $CLASS;
-    
-    my %stand_in = (
-        'File::Monitor::Object::Linux'  => qr/linux/
-    );
-
-    # Class to bless our objects to
-    $CLASS = __PACKAGE__;
-
-    # Attempt to find a platform specific stand-in
-    SI: while ( my ($module, $check) = each %stand_in ) {
-        if ( $^O =~ $check ) {
-            eval "require $module";
-            next SI if $@;
-            if ( my $class = $module->_stand_in ) {
-                $CLASS = $class;
-                last SI;
-            }
-        }
-    }
-
-    return $CLASS;
-}
-
 sub new {
     my $class = shift;
-    
-    $class = _guess_class();
     my $self = bless { }, $class;
     $self->_initialize(@_);
 
