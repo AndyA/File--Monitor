@@ -4,10 +4,11 @@ use strict;
 use warnings;
 
 use Test::More;
+use File::Monitor;
 use File::Monitor::Object;
 use File::Monitor::Delta;
 
-plan tests => 381;
+plan tests => 384;
 
 my @tests = (
     {
@@ -157,7 +158,8 @@ my @read_only_attr = qw(
 for my $test (@tests) {
     my $test_name = $test->{name};
 
-    ok my $object = File::Monitor::Object->new('.');
+    ok my $monitor = File::Monitor->new;
+    ok my $object = File::Monitor::Object->new( { name => '.', owner => $monitor } );
     isa_ok $object, 'File::Monitor::Object';
 
     ok my $change = File::Monitor::Delta->new( {

@@ -17,12 +17,14 @@ plan tests => 6 + @READ_ONLY * 2;
 ok my $monitor = File::Monitor->new(), 'object creation OK';
 isa_ok $monitor, 'File::Monitor';
 
-eval { File::Monitor::Object->new(); };
+eval { File::Monitor::Object->new( { owner => $monitor } ); };
 like $@, qr/name/, 'name is mandatory';
 
-ok my $object = File::Monitor::Object->new( $^X ), 'object creaton OK';
+eval { File::Monitor::Object->new( { name => '.' } ); };
+like $@, qr/owner/, 'owner is mandatory';
+
+ok my $object = File::Monitor::Object->new( { name => '.', owner => $monitor } ), 'object creaton OK';
 isa_ok $object, 'File::Monitor::Object';
-is $object->name, $^X, 'name returns correct value';
 
 for my $field (@READ_ONLY) {
     eval { $object->$field };
