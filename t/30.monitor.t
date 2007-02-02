@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 224;
+use Test::More tests => 232;
 use File::Path;
 use File::Spec;
 use Cwd;
@@ -109,7 +109,7 @@ my %test_map = (
 SKIP: {
     my $tmp_dir = File::Spec->tmpdir;
 
-    skip "Can't find temporary directory", 224
+    skip "Can't find temporary directory", 232
         unless defined $tmp_dir;
 
     my $test_dir = File::Spec->catdir($tmp_dir, "fmtest-$$");
@@ -499,7 +499,8 @@ SKIP: {
             }
         }
 
-    CH: for my $change (@ch) {
+        CH: 
+        for my $change (@ch) {
             my $name    = $change->name;
             my $caption = "$test_name($name)";
             my $expect  = delete $item->{expect}->{$name};
@@ -517,6 +518,11 @@ SKIP: {
         # Check we used up all the items
         is_deeply $item->{expect}, {},
             "$test_name: all expected changes matched";
+            
+        # Make sure another scan returns no changes
+        @ch = $monitor->scan;
+        is_deeply \@ch, [ ], "$test_name: no change";
+            
     }
 
     rmtree $test_dir;

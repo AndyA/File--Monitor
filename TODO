@@ -12,3 +12,8 @@ Things to do:
 
     * Investigate whether changes to the monitored directory are
       reported correctly under Windows.
+
+    * Implement more efficient polling in the degenerate case where you
+      only want to know if any of the monitored files has changed.
+      That's tricky because the current interface assumes that all the
+      File::Monitor::Objects are updated after each call to scan().
