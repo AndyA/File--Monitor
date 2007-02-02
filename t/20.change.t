@@ -90,6 +90,7 @@ my @tests = (
             rdev      => 0,
             size      => 0,
             error     => '',
+
             # files missing
         },
         expect => {
@@ -147,42 +148,46 @@ my @tests = (
 );
 
 my @read_only_attr = qw(
-    old_dev old_inode old_mode old_num_links old_uid old_gid old_rdev
-    old_size old_mtime old_ctime old_blk_size old_blocks old_error
-    old_files new_dev new_inode new_mode new_num_links new_uid new_gid
-    new_rdev new_size new_mtime new_ctime new_blk_size new_blocks
-    new_error new_files created deleted mtime ctime uid gid mode size
-    files_created files_deleted name
+  old_dev old_inode old_mode old_num_links old_uid old_gid old_rdev
+  old_size old_mtime old_ctime old_blk_size old_blocks old_error
+  old_files new_dev new_inode new_mode new_num_links new_uid new_gid
+  new_rdev new_size new_mtime new_ctime new_blk_size new_blocks
+  new_error new_files created deleted mtime ctime uid gid mode size
+  files_created files_deleted name
 );
 
-for my $test (@tests) {
+for my $test ( @tests ) {
     my $test_name = $test->{name};
 
     ok my $monitor = File::Monitor->new;
-    ok my $object = File::Monitor::Object->new( { name => '.', owner => $monitor } );
+    ok my $object
+      = File::Monitor::Object->new( { name => '.', owner => $monitor } );
     isa_ok $object, 'File::Monitor::Object';
 
-    ok my $change = File::Monitor::Delta->new( {
-        object      => $object,
-        old_info    => $test->{old_info},
-        new_info    => $test->{new_info}
-    } );
+    ok my $change = File::Monitor::Delta->new(
+        {
+            object   => $object,
+            old_info => $test->{old_info},
+            new_info => $test->{new_info}
+        }
+    );
 
     isa_ok $change, 'File::Monitor::Delta';
 
-    for my $ro (@read_only_attr) {
+    for my $ro ( @read_only_attr ) {
         can_ok $change, $ro;
         eval { $change->$ro() };
         ok !$@, "read $ro OK";
-        eval { $change->$ro('ouch') };
+        eval { $change->$ro( 'ouch' ) };
         like $@, qr/read\W+only/, "can't write $ro";
     }
 
-    while ( my ($attr, $value) = each %{ $test->{expect} } ) {
-        if ($attr =~ /^files_/) {
+    while ( my ( $attr, $value ) = each %{ $test->{expect} } ) {
+        if ( $attr =~ /^files_/ ) {
             my @got = $change->$attr();
             is_deeply \@got, $value, "$test_name: $attr OK";
-        } else {
+        }
+        else {
             my $got = $change->$attr();
             is_deeply $got, $value, "$test_name: $attr OK";
         }

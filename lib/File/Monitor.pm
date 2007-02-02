@@ -8,17 +8,17 @@ use base qw(File::Monitor::Base);
 
 use File::Monitor::Object;
 
-use version; our $VERSION = qv('0.0.3');
+use version; our $VERSION = qv( '0.0.3' );
 
 sub _initialize {
     my $self = shift;
-    my $args = shift || { };
+    my $args = shift || {};
 
     $self->SUPER::_initialize( $args );
     $self->_install_callbacks( $args );
     $self->_report_extra( $args );
 
-    $self->{_monitors} = { };
+    $self->{_monitors} = {};
 }
 
 sub _set_watcher {
@@ -26,7 +26,7 @@ sub _set_watcher {
     my $object = shift;
 
     my $name = $object->name;
-    
+
     return $self->{_monitors}->{$name} = $object;
 }
 
@@ -35,24 +35,26 @@ sub watch {
 
     my $args;
 
-    if (ref $_[0] eq 'HASH') {
+    if ( ref $_[0] eq 'HASH' ) {
+
         # Hash ref containing all arguments
         $args = shift;
 
-        croak "When options are supplied as a hash there may be no other arguments"
-            if @_;
-    } else {
+        croak
+          "When options are supplied as a hash there may be no other arguments"
+          if @_;
+    }
+    else {
+
         # File/dir name, optional callback
-        my $name     = shift or croak "A filename must be specified";
+        my $name = shift or croak "A filename must be specified";
         my $callback = shift;
 
-        $args = {
-            name    => $name
-        };
+        $args = { name => $name };
 
         # If a callback is defined install it for all changes
         $args->{callback}->{change} = $callback
-            if defined $callback;
+          if defined $callback;
     }
 
     $args->{owner} = $self;
@@ -70,13 +72,13 @@ sub unwatch {
 
 sub scan {
     my $self    = shift;
-    my @changed = ( );
+    my @changed = ();
 
-    for my $obj (values %{ $self->{_monitors} }) {
+    for my $obj ( values %{ $self->{_monitors} } ) {
         push @changed, $obj->scan;
     }
 
-    for my $change (@changed) {
+    for my $change ( @changed ) {
         $self->_make_callbacks( $change );
     }
 

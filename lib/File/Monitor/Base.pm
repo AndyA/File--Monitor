@@ -5,12 +5,12 @@ use Carp;
 use File::Spec;
 use version;
 
-our $VERSION = qv('0.0.3');
+our $VERSION = qv( '0.0.3' );
 
 sub new {
     my $class = shift;
     my $self = bless {}, $class;
-    $self->_initialize(@_);
+    $self->_initialize( @_ );
     return $self;
 }
 
@@ -18,9 +18,8 @@ sub _report_extra {
     my $self  = shift;
     my $args  = shift;
     my @extra = keys %$args;
-    croak "The following options are not recognised: ",
-        join(' ', sort @extra)
-        if @extra;
+    croak "The following options are not recognised: ", join( ' ', sort @extra )
+      if @extra;
 }
 
 sub _initialize {
@@ -32,16 +31,18 @@ sub _install_callbacks {
     my $args = shift;
 
     # Install callbacks
-    if (my $callback = delete $args->{callback}) {
-        if (ref $callback eq 'CODE') {
-            $self->callback('change', $callback);
-        } elsif (ref $callback eq 'HASH') {
-            while (my ($event, $cb) = each %$callback) {
-                $self->callback($event, $cb);
+    if ( my $callback = delete $args->{callback} ) {
+        if ( ref $callback eq 'CODE' ) {
+            $self->callback( 'change', $callback );
+        }
+        elsif ( ref $callback eq 'HASH' ) {
+            while ( my ( $event, $cb ) = each %$callback ) {
+                $self->callback( $event, $cb );
             }
-        } else {
+        }
+        else {
             croak "A callback must be a code reference "
-                . "or a hash of code references";
+              . "or a hash of code references";
         }
     }
 }
@@ -49,13 +50,13 @@ sub _install_callbacks {
 sub _make_callbacks {
     my $self   = shift;
     my $change = shift;
-    $change->_trigger_callbacks($self->{_callbacks});
+    $change->_trigger_callbacks( $self->{_callbacks} );
 }
 
 sub _canonical_name {
     my $self = shift;
     my $name = shift;
-    return File::Spec->canonpath(File::Spec->rel2abs($name));
+    return File::Spec->canonpath( File::Spec->rel2abs( $name ) );
 }
 
 sub callback {
@@ -64,12 +65,12 @@ sub callback {
     my $code  = shift;
 
     # Allow event to be omitted
-    if (ref $event eq 'CODE' && !defined $code) {
-        ($code, $event) = ($event, 'changed');
+    if ( ref $event eq 'CODE' && !defined $code ) {
+        ( $code, $event ) = ( $event, 'changed' );
     }
 
     croak "Callback must be a code references"
-        unless ref $code eq 'CODE';
+      unless ref $code eq 'CODE';
 
     $self->{_callbacks}->{$event} = $code;
 }

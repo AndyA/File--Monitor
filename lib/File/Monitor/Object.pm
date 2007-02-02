@@ -11,7 +11,7 @@ use File::Monitor::Delta;
 
 use base qw(File::Monitor::Base);
 
-use version; our $VERSION = qv('0.0.3');
+use version; our $VERSION = qv( '0.0.3' );
 
 my @STAT_FIELDS;
 my @INFO_FIELDS;
@@ -20,16 +20,18 @@ my $CLASS;
 BEGIN {
 
     @STAT_FIELDS = qw(
-        dev inode mode num_links uid gid rdev size atime mtime ctime
-        blk_size blocks
+      dev inode mode num_links uid gid rdev size atime mtime ctime
+      blk_size blocks
     );
 
-    @INFO_FIELDS = ( @STAT_FIELDS, qw(
-        error files
-    ) );
+    @INFO_FIELDS = (
+        @STAT_FIELDS, qw(
+          error files
+          )
+    );
 
     my @ATTR = qw(
-        name
+      name
     );
 
     my $IS_ARRAY = qr{^files$};
@@ -37,14 +39,15 @@ BEGIN {
     no strict 'refs';
 
     # Accessors for info
-    for my $info (@INFO_FIELDS) {
-        if ($info =~ $IS_ARRAY) {
+    for my $info ( @INFO_FIELDS ) {
+        if ( $info =~ $IS_ARRAY ) {
             *$info = sub {
                 my $self = shift;
                 croak "$info is read-only" if @_;
-                return @{ $self->{_info}->{$info} || [ ] };
+                return @{ $self->{_info}->{$info} || [] };
             };
-        } else {
+        }
+        else {
             *$info = sub {
                 my $self = shift;
                 croak "$info is read-only" if @_;
@@ -53,7 +56,7 @@ BEGIN {
         }
     }
 
-    for my $attr (@ATTR) {
+    for my $attr ( @ATTR ) {
         *$attr = sub {
             my $self = shift;
             croak "$attr is read-only" if @_;
@@ -74,18 +77,18 @@ sub _initialize {
     $self->{_info}->{virgin} = 1;
 
     my $name = delete $args->{name}
-        or croak "The name option must be supplied";
+      or croak "The name option must be supplied";
 
     # Build our object
     $self->{name} = $self->_canonical_name( $name );
-    
-    $self->{_owner} = delete $args->{owner} 
-        or croak "A " . __PACKAGE__ . " must have an owner";
+
+    $self->{_owner} = delete $args->{owner}
+      or croak "A " . __PACKAGE__ . " must have an owner";
 
     # Avoid circular references
     weaken $self->{_owner};
 
-    for my $opt (qw(files recurse)) {
+    for my $opt ( qw(files recurse) ) {
         $self->{_options}->{$opt} = delete $args->{$opt};
     }
 
@@ -96,12 +99,11 @@ sub _read_dir {
     my $self = shift;
     my $dir  = shift;
 
-    opendir(my $dh, $dir) or die "Can't read $dir ($!)";
-    my @files = map { File::Spec->catfile($dir, $_) }
-                sort
-                grep { $_ !~ /^[.]{1,2}$/ }
-                readdir($dh);
-    closedir($dh);
+    opendir( my $dh, $dir ) or die "Can't read $dir ($!)";
+    my @files = map { File::Spec->catfile( $dir, $_ ) }
+      sort
+      grep { $_ !~ /^[.]{1,2}$/ } readdir( $dh );
+    closedir( $dh );
 
     return @files;
 }
@@ -122,17 +124,22 @@ sub _scan_object {
     eval {
         @info{@STAT_FIELDS} = $self->_stat( $name );
 
-        if (defined $info{mode} && S_ISDIR( $info{mode} )) {
+        if ( defined $info{mode} && S_ISDIR( $info{mode} ) ) {
+
             # Do directory specific things
             if ( $self->{_options}->{files} ) {
+
                 # Expand one level
                 $info{files} = [ $self->_read_dir( $name ) ];
-            } elsif ( $self->{_options}->{recurse} ) {
+            }
+            elsif ( $self->{_options}->{recurse} ) {
+
                 # Expand whole directory tree
                 my @work = $self->_read_dir( $name );
                 while ( my $obj = shift @work ) {
                     push @{ $info{files} }, $obj;
-                    if (-d $obj) {
+                    if ( -d $obj ) {
+
                         # Depth first to simulate recursion
                         unshift @work, $self->_read_dir( $obj );
                     }
@@ -149,19 +156,22 @@ sub _scan_object {
 sub scan {
     my $self = shift;
 
-    my $info = $self->_scan_object;
-    my $name = $self->name;
-    my @changes = ( );
+    my $info    = $self->_scan_object;
+    my $name    = $self->name;
+    my @changes = ();
 
-    unless (delete $self->{_info}->{virgin}) {
+    unless ( delete $self->{_info}->{virgin} ) {
+
         # Already done one scan, so now we compute deltas
-        my $change = File::Monitor::Delta->new( {
-            object      => $self,
-            old_info    => $self->{_info},
-            new_info    => $info
-        } );
+        my $change = File::Monitor::Delta->new(
+            {
+                object   => $self,
+                old_info => $self->{_info},
+                new_info => $info
+            }
+        );
 
-        if ($change->is_change) {
+        if ( $change->is_change ) {
             $self->_make_callbacks( $change );
             push @changes, $change;
         }

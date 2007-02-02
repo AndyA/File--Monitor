@@ -3,15 +3,17 @@
 use strict;
 use warnings;
 use Carp;
+use YAML;
 
 use lib 'lib';
 
 use File::Monitor;
-use File::Monitor::Object::Linux;
 
 $| = 1;
 
 my $monitor = File::Monitor->new;
+
+push @ARGV, '.' unless @ARGV;
 
 while (my $obj = shift) {
     $monitor->watch({
@@ -19,6 +21,8 @@ while (my $obj = shift) {
         recurse => 1
     });
 }
+
+warn Dump( $monitor );
 
 my @attr = qw(
     deleted mtime ctime uid gid mode 
