@@ -6,7 +6,6 @@ TODO
 lib/File/Monitor/Base.pm
 lib/File/Monitor/Delta.pm
 lib/File/Monitor/Object.pm
-lib/File/Monitor/Object/Linux.pm
 lib/File/Monitor.pm
 t/00.load.t
 t/10.monitor-basic.t
