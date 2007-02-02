@@ -1,0 +1,12 @@
+For a directory we can monitor
+
+    * the directory object itself and the number of files it contains
+    * the files immediately within the directory
+    * the entire directory tree
+        * for file creation and deletion
+        * for all file changes
+
+Need to rejig schema. Instead of trying to merge multiple options into a
+single object separate out the public Object interface (of which there
+can be many for any file) from a private per file object that actually
+does the scanning.
