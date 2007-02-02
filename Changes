@@ -1,10 +1,21 @@
 Revision history for File-Monitor
 
 0.0.1   2007-02-01
+
         Initial release.
        
 0.0.2   2007-02-01
+
         Removed idiotic idea of monitoring atime. What was I thinking?
+
         Started work on Linux specific implementation.
 
+0.0.3   2007-02-02
 
+        Deprecated the direct creation of File::Monitor::Object and the
+        whole idea using individual F::M::O instances directly. We need
+        to enforce the idea of a parent object to support platform
+        specific monitoring support (which typically requires a monitor
+        instance with a number of watches attached to it).
+
+        Moved the Linux support into a separate (unreleased) branch.

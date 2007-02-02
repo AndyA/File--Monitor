@@ -6,7 +6,7 @@ use Carp;
 
 use base qw(File::Monitor::Base);
 
-use version; our $VERSION = qv('0.0.2');
+use version; our $VERSION = qv('0.0.3');
 
 my %TAXONOMY;
 
@@ -241,7 +241,7 @@ File::Monitor::Delta - Encapsulate a change to a file or directory
 
 =head1 VERSION
 
-This document describes File::Monitor::Delta version 0.0.2
+This document describes File::Monitor::Delta version 0.0.3
 
 =head1 SYNOPSIS
 
