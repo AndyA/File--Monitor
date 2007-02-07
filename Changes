@@ -19,3 +19,10 @@ Revision history for File-Monitor
         instance with a number of watches attached to it).
 
         Moved the Linux support into a separate (unreleased) branch.
+
+0.0.4   2007-02-07
+
+        Added the option (pass base argument to File::Monitor->new) to
+        use relative names internally. This is to support relocatable
+        trees - if the whole tree moves call 
+        $monitor->base( '/new/dir' ).

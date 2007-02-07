@@ -11,7 +11,7 @@ use File::Monitor::Delta;
 
 use base qw(File::Monitor::Base);
 
-use version; our $VERSION = qv( '0.0.3' );
+use version; our $VERSION = qv( '0.0.4' );
 
 my @STAT_FIELDS;
 my @INFO_FIELDS;
@@ -26,43 +26,40 @@ BEGIN {
 
     @INFO_FIELDS = (
         @STAT_FIELDS, qw(
-          error files
+          error
           )
     );
-
-    my @ATTR = qw(
-      name
-    );
-
-    my $IS_ARRAY = qr{^files$};
 
     no strict 'refs';
 
     # Accessors for info
     for my $info ( @INFO_FIELDS ) {
-        if ( $info =~ $IS_ARRAY ) {
-            *$info = sub {
-                my $self = shift;
-                croak "$info is read-only" if @_;
-                return @{ $self->{_info}->{$info} || [] };
-            };
-        }
-        else {
-            *$info = sub {
-                my $self = shift;
-                croak "$info is read-only" if @_;
-                return $self->{_info}->{$info};
-            };
-        }
-    }
-
-    for my $attr ( @ATTR ) {
-        *$attr = sub {
+        *$info = sub {
             my $self = shift;
-            croak "$attr is read-only" if @_;
-            return $self->{$attr};
+            croak "$info attribute is read-only" if @_;
+            return $self->{_info}->{$info};
         };
     }
+}
+
+sub owner {
+    my $self = shift;
+    croak "name attribute is read-only" if @_;
+    return $self->{owner};
+}
+
+sub name {
+    my $self = shift;
+    croak "name attribute is read-only" if @_;
+    return $self->owner->_make_absolute( $self->{name} );
+}
+
+sub files {
+    my $self = shift;
+    croak "files attribute is read-only" if @_;
+    my $monitor = $self->owner;
+    return
+      map { $monitor->_make_absolute( $_ ) } @{ $self->{_info}->{files} || [] };
 }
 
 sub _initialize {
@@ -79,14 +76,14 @@ sub _initialize {
     my $name = delete $args->{name}
       or croak "The name option must be supplied";
 
-    # Build our object
-    $self->{name} = $self->_canonical_name( $name );
-
-    $self->{_owner} = delete $args->{owner}
+    $self->{owner} = delete $args->{owner}
       or croak "A " . __PACKAGE__ . " must have an owner";
 
+    # Build our object
+    $self->{name} = $self->owner->_canonical_name( $name );
+
     # Avoid circular references
-    weaken $self->{_owner};
+    weaken $self->{owner};
 
     for my $opt ( qw(files recurse) ) {
         $self->{_options}->{$opt} = delete $args->{$opt};
@@ -125,19 +122,21 @@ sub _scan_object {
         @info{@STAT_FIELDS} = $self->_stat( $name );
 
         if ( defined $info{mode} && S_ISDIR( $info{mode} ) ) {
+            my $monitor = $self->owner;
 
             # Do directory specific things
             if ( $self->{_options}->{files} ) {
 
                 # Expand one level
-                $info{files} = [ $self->_read_dir( $name ) ];
+                $info{files} = [ map { $monitor->_make_relative( $_ ) }
+                      $self->_read_dir( $name ) ];
             }
             elsif ( $self->{_options}->{recurse} ) {
 
                 # Expand whole directory tree
                 my @work = $self->_read_dir( $name );
                 while ( my $obj = shift @work ) {
-                    push @{ $info{files} }, $obj;
+                    push @{ $info{files} }, $monitor->_make_relative( $obj );
                     if ( -d $obj ) {
 
                         # Depth first to simulate recursion
@@ -190,7 +189,7 @@ File::Monitor::Object - Monitor a filesystem object for changes.
 
 =head1 VERSION
 
-This document describes File::Monitor::Object version 0.0.3
+This document describes File::Monitor::Object version 0.0.4
 
 =head1 SYNOPSIS
 

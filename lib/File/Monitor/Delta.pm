@@ -6,7 +6,7 @@ use Carp;
 
 use base qw(File::Monitor::Base);
 
-use version; our $VERSION = qv( '0.0.3' );
+use version; our $VERSION = qv( '0.0.4' );
 
 my %TAXONOMY;
 
@@ -209,8 +209,9 @@ sub _compute_delta {
     my @df = _diff_list( $self->{old_info}->{files} || [],
         $self->{new_info}->{files} || [] );
 
+    my $monitor = $self->object->owner;
     for my $attr ( qw(files_deleted files_created) ) {
-        my @ar = sort @{ shift @df };
+        my @ar = map { $monitor->_make_absolute( $_ ) } sort @{ shift @df };
         $self->{delta}->{$attr} = \@ar if @ar;
     }
 
@@ -249,7 +250,7 @@ File::Monitor::Delta - Encapsulate a change to a file or directory
 
 =head1 VERSION
 
-This document describes File::Monitor::Delta version 0.0.3
+This document describes File::Monitor::Delta version 0.0.4
 
 =head1 SYNOPSIS
 

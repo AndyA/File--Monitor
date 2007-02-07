@@ -1,0 +1,17 @@
+^andy/
+^Notes[.]txt$
+\B\.svn\b
+^cover_db/
+
+# Makemaker generated files and dirs.
+^MANIFEST\.
+^Makefile$
+^blib/
+^pm_to_blib$
+
+# Temp, old and emacs backup files.
+~$
+\.(old|tmp|bak)$
+^#.*#$
+^\.#
+
