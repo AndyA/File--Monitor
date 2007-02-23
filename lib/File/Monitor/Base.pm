@@ -5,7 +5,7 @@ use Carp;
 use File::Spec;
 use version;
 
-our $VERSION = qv( '0.0.4' );
+our $VERSION = qv( '0.0.5' );
 
 sub new {
     my $class = shift;
@@ -77,7 +77,7 @@ File::Monitor::Base - Common base class for file monitoring.
 
 =head1 VERSION
 
-This document describes File::Monitor::Base version 0.0.4
+This document describes File::Monitor::Base version 0.0.5
 
 =head1 DESCRIPTION
 

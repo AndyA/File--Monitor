@@ -11,7 +11,7 @@ use File::Monitor::Delta;
 
 use base qw(File::Monitor::Base);
 
-use version; our $VERSION = qv( '0.0.4' );
+use version; our $VERSION = qv( '0.0.5' );
 
 my @STAT_FIELDS;
 my @INFO_FIELDS;
@@ -189,7 +189,7 @@ File::Monitor::Object - Monitor a filesystem object for changes.
 
 =head1 VERSION
 
-This document describes File::Monitor::Object version 0.0.4
+This document describes File::Monitor::Object version 0.0.5
 
 =head1 SYNOPSIS
 

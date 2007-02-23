@@ -12,5 +12,6 @@ t/20.change.t
 t/30.monitor.t
 t/40.relocate.t
 t/50.freeze.t
+t/pod-coverage.t
 t/pod.t
 TODO

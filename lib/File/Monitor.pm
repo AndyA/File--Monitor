@@ -8,7 +8,7 @@ use base qw(File::Monitor::Base);
 
 use File::Monitor::Object;
 
-use version; our $VERSION = qv( '0.0.4' );
+use version; our $VERSION = qv( '0.0.5' );
 
 sub _initialize {
     my $self = shift;
@@ -149,7 +149,7 @@ File::Monitor - Monitor files and directories for changes.
 
 =head1 VERSION
 
-This document describes File::Monitor version 0.0.4
+This document describes File::Monitor version 0.0.5
 
 =head1 SYNOPSIS
 
@@ -518,6 +518,12 @@ relocated.
 
 If you are going to specify a base directory you must do so before any
 watches are added.
+
+=item C<< has_monitors >>
+
+Returns true if this File::Monitor has any monitors attached to it. Used
+internally to police the restriction that a base directory may not be
+set when monitors have been added.
 
 =back
 
