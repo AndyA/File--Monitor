@@ -6,7 +6,7 @@ use Carp;
 
 use base qw(File::Monitor::Base);
 
-use version; our $VERSION = qv( '0.0.5' );
+our $VERSION = '0.10';
 
 my %TAXONOMY;
 
@@ -139,7 +139,8 @@ sub _initialize {
 
     $self->_report_extra( $args );
 
-    if ( !$self->_deep_compare( $self->{old_info}, $self->{new_info} ) ) {
+    if ( !$self->_deep_compare( $self->{old_info}, $self->{new_info} ) )
+    {
         $self->_compute_delta;
     }
 }
@@ -184,7 +185,8 @@ sub _walk_taxo {
 
     while ( my ( $n, $v ) = each %$taxo ) {
         if ( ref $v eq 'CODE' ) {
-            my $diff = $v->( $self, $self->{old_info}, $self->{new_info}, $n );
+            my $diff
+              = $v->( $self, $self->{old_info}, $self->{new_info}, $n );
             if ( $diff ) {
                 $self->{delta}->{$n} = $diff;
                 $self->{"_is_event"}->{$n}++;
@@ -206,12 +208,15 @@ sub _compute_delta {
     my $self = shift;
 
     # Compute the file list deltas as a special case first
-    my @df = _diff_list( $self->{old_info}->{files} || [],
-        $self->{new_info}->{files} || [] );
+    my @df = _diff_list(
+        $self->{old_info}->{files} || [],
+        $self->{new_info}->{files} || []
+    );
 
     my $monitor = $self->object->owner;
     for my $attr ( qw(files_deleted files_created) ) {
-        my @ar = map { $monitor->_make_absolute( $_ ) } sort @{ shift @df };
+        my @ar
+          = map { $monitor->_make_absolute( $_ ) } sort @{ shift @df };
         $self->{delta}->{$attr} = \@ar if @ar;
     }
 
@@ -250,7 +255,7 @@ File::Monitor::Delta - Encapsulate a change to a file or directory
 
 =head1 VERSION
 
-This document describes File::Monitor::Delta version 0.0.5
+This document describes File::Monitor::Delta version 0.10
 
 =head1 SYNOPSIS
 

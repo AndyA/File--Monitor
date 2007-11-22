@@ -11,7 +11,7 @@ use File::Monitor::Delta;
 
 use base qw(File::Monitor::Base);
 
-use version; our $VERSION = qv( '0.0.5' );
+our $VERSION = '0.10';
 
 my @STAT_FIELDS;
 my @INFO_FIELDS;
@@ -59,7 +59,8 @@ sub files {
     croak "files attribute is read-only" if @_;
     my $monitor = $self->owner;
     return
-      map { $monitor->_make_absolute( $_ ) } @{ $self->{_info}->{files} || [] };
+      map { $monitor->_make_absolute( $_ ) }
+      @{ $self->{_info}->{files} || [] };
 }
 
 sub _initialize {
@@ -136,7 +137,8 @@ sub _scan_object {
                 # Expand whole directory tree
                 my @work = $self->_read_dir( $name );
                 while ( my $obj = shift @work ) {
-                    push @{ $info{files} }, $monitor->_make_relative( $obj );
+                    push @{ $info{files} },
+                      $monitor->_make_relative( $obj );
                     if ( -d $obj ) {
 
                         # Depth first to simulate recursion
@@ -189,7 +191,7 @@ File::Monitor::Object - Monitor a filesystem object for changes.
 
 =head1 VERSION
 
-This document describes File::Monitor::Object version 0.0.5
+This document describes File::Monitor::Object version 0.10
 
 =head1 SYNOPSIS
 

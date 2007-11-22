@@ -1,4 +1,5 @@
 Changes
+examples/monitor.pl
 lib/File/Monitor.pm
 lib/File/Monitor/Base.pm
 lib/File/Monitor/Delta.pm
