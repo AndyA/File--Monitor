@@ -8,7 +8,8 @@ use base qw(File::Monitor::Base);
 
 use File::Monitor::Object;
 
-our $VERSION = '0.10';
+use vars qw( $VERSION );
+$VERSION = '0.10';
 
 sub _initialize {
     my $self = shift;
