@@ -113,8 +113,6 @@ SKIP: {
 
     my $test_dir = File::Spec->catdir( $tmp_dir, "fmtest-$$" );
 
-    diag( "Test directory: $test_dir" );
-
     for my $set_base ( 0 .. 1 ) {
 
         my $fix_name = sub {

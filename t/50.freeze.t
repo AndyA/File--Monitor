@@ -54,7 +54,6 @@ SKIP: {
       unless defined $tmp_dir;
 
     my $test_base = File::Spec->catdir( $tmp_dir, "fmtest-$$" );
-    diag( "Test directory: $test_base" );
 
     my $next_suff = 1;
 
