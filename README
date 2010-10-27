@@ -2,7 +2,7 @@ NAME
     File::Monitor - Monitor files and directories for changes.
 
 VERSION
-    This document describes File::Monitor version 0.10
+    This document describes File::Monitor version 1.00
 
 SYNOPSIS
         use File::Monitor;
