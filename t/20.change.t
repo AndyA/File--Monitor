@@ -73,7 +73,7 @@ my @tests = (
       rdev      => 0,
       size      => 123,
       error     => '',
-      files     => [ 'a', 'b', 'c', 'q' ],
+      files     => [ 'a', 'b', 'c' ],
     },
     new_info => {
       mode      => 0x000081a4,

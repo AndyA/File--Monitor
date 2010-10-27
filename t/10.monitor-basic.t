@@ -8,7 +8,7 @@ use File::Monitor;
 use File::Monitor::Object;
 
 my @READ_ONLY = qw(
- dev inode mode num_links oid uid gid rdev size atime mtime ctime blk_size
+ dev inode mode num_links uid gid rdev size atime mtime ctime blk_size
  blocks error files name
 );
 
