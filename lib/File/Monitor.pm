@@ -9,7 +9,7 @@ use base qw(File::Monitor::Base);
 use File::Monitor::Object;
 
 use vars qw( $VERSION );
-$VERSION = '0.10';
+$VERSION = '1.00';
 
 sub _initialize {
   my $self = shift;
@@ -153,7 +153,7 @@ File::Monitor - Monitor files and directories for changes.
 
 =head1 VERSION
 
-This document describes File::Monitor version 0.10
+This document describes File::Monitor version 1.00
 
 =head1 SYNOPSIS
 
