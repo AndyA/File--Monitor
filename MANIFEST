@@ -1,10 +1,11 @@
+Build.PL
 Changes
 examples/monitor.pl
+inc/MyBuilder.pm
 lib/File/Monitor.pm
 lib/File/Monitor/Base.pm
 lib/File/Monitor/Delta.pm
 lib/File/Monitor/Object.pm
-Makefile.PL
 MANIFEST
 README
 t/00.load.t
