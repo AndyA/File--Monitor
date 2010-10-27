@@ -44,7 +44,7 @@ BEGIN {
 
 sub owner {
   my $self = shift;
-  croak "name attribute is read-only" if @_;
+  croak "owner attribute is read-only" if @_;
   return $self->{owner};
 }
 
