@@ -24,7 +24,6 @@ my $build = MyBuilder->new(
   sign               => 1,
   license            => 'perl',
   create_readme      => 1,
-  create_makefile_pl => 'traditional',
 );
 
 $build->create_build_script;
