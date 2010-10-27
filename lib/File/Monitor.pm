@@ -29,7 +29,7 @@ sub _initialize {
 
 sub has_monitors {
   my $self = shift;
-  return 1 if exists $self->{_monitors} && %{ $self->{_monitors} };
+  return 1 if keys %{ $self->{_monitors} || {} };
   return;
 }
 
