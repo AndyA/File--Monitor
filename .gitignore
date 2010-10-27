@@ -4,6 +4,7 @@
 .prove
 Build
 File-Monitor-*
+MYMETA.yml
 Makefile
 Makefile.old
 Session.vim
