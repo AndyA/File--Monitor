@@ -8,8 +8,8 @@ use File::Monitor;
 use File::Monitor::Object;
 
 my @READ_ONLY = qw(
-  dev inode mode num_links oid uid gid rdev size atime mtime ctime blk_size
-  blocks error files name
+ dev inode mode num_links oid uid gid rdev size atime mtime ctime blk_size
+ blocks error files name
 );
 
 plan tests => 6 + @READ_ONLY * 2;
@@ -24,13 +24,13 @@ eval { File::Monitor::Object->new( { name => '.' } ); };
 like $@, qr/owner/, 'owner is mandatory';
 
 ok my $object
-  = File::Monitor::Object->new( { name => '.', owner => $monitor } ),
-  'object creaton OK';
+ = File::Monitor::Object->new( { name => '.', owner => $monitor } ),
+ 'object creaton OK';
 isa_ok $object, 'File::Monitor::Object';
 
 for my $field ( @READ_ONLY ) {
-    eval { $object->$field };
-    ok !$@, "$field can be read";
-    eval { $object->$field( 'something' ); };
-    like $@, qr/read\W+only/, "$field can't be written";
+  eval { $object->$field };
+  ok !$@, "$field can be read";
+  eval { $object->$field( 'something' ); };
+  like $@, qr/read\W+only/, "$field can't be written";
 }

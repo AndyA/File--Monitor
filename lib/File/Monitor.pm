@@ -12,133 +12,136 @@ use vars qw( $VERSION );
 $VERSION = '0.10';
 
 sub _initialize {
-    my $self = shift;
-    my $args = shift || {};
+  my $self = shift;
+  my $args = shift || {};
 
-    $self->SUPER::_initialize( $args );
-    $self->_install_callbacks( $args );
+  $self->SUPER::_initialize( $args );
+  $self->_install_callbacks( $args );
 
-    if ( my $base = delete $args->{base} ) {
-        $self->base( $base );
-    }
+  if ( my $base = delete $args->{base} ) {
+    $self->base( $base );
+  }
 
-    $self->_report_extra( $args );
+  $self->_report_extra( $args );
 
-    $self->{_monitors} = {};
+  $self->{_monitors} = {};
 }
 
 sub has_monitors {
-    my $self = shift;
-    return 1 if exists $self->{_monitors} && %{ $self->{_monitors} };
-    return;
+  my $self = shift;
+  return 1 if exists $self->{_monitors} && %{ $self->{_monitors} };
+  return;
 }
 
 sub base {
-    my $self     = shift;
-    my $cur_base = $self->{_base};
-    return $cur_base unless @_;
-    my $new_base = shift or croak "Can't unset base directory";
+  my $self     = shift;
+  my $cur_base = $self->{_base};
+  return $cur_base unless @_;
+  my $new_base = shift or croak "Can't unset base directory";
 
-    if ( !defined $cur_base && $self->has_monitors ) {
-        croak "Can't make a non-empty absolute " . __PACKAGE__ . " relative";
-    }
+  if ( !defined $cur_base && $self->has_monitors ) {
+    croak "Can't make a non-empty absolute "
+     . __PACKAGE__
+     . " relative";
+  }
 
-    $self->{_base} = File::Spec->canonpath( File::Spec->rel2abs( $new_base ) );
+  $self->{_base}
+   = File::Spec->canonpath( File::Spec->rel2abs( $new_base ) );
 }
 
 sub _set_watcher {
-    my $self   = shift;
-    my $object = shift;
+  my $self   = shift;
+  my $object = shift;
 
-    my $name = $self->_make_relative( $object->name );
-    return $self->{_monitors}->{$name} = $object;
+  my $name = $self->_make_relative( $object->name );
+  return $self->{_monitors}->{$name} = $object;
 }
 
 sub watch {
-    my $self = shift;
+  my $self = shift;
 
-    my $args;
+  my $args;
 
-    if ( ref $_[0] eq 'HASH' ) {
+  if ( ref $_[0] eq 'HASH' ) {
 
-        # Hash ref containing all arguments
-        $args = shift;
+    # Hash ref containing all arguments
+    $args = shift;
 
-        croak "When options are supplied as a hash "
-          . "there may be no other arguments"
-          if @_;
-    }
-    else {
+    croak "When options are supplied as a hash "
+     . "there may be no other arguments"
+     if @_;
+  }
+  else {
 
-        # File/dir name, optional callback
-        my $name = shift or croak "A filename must be specified";
-        my $callback = shift;
+    # File/dir name, optional callback
+    my $name = shift or croak "A filename must be specified";
+    my $callback = shift;
 
-        $args = { name => $name };
+    $args = { name => $name };
 
-        # If a callback is defined install it for all changes
-        $args->{callback}->{change} = $callback
-          if defined $callback;
-    }
+    # If a callback is defined install it for all changes
+    $args->{callback}->{change} = $callback
+     if defined $callback;
+  }
 
-    $args->{owner} = $self;
+  $args->{owner} = $self;
 
-    return $self->_set_watcher( File::Monitor::Object->new( $args ) );
+  return $self->_set_watcher( File::Monitor::Object->new( $args ) );
 }
 
 sub unwatch {
-    my $self = shift;
-    my $name = shift || croak "A filename must be specified";
+  my $self = shift;
+  my $name = shift || croak "A filename must be specified";
 
-    $name = $self->_make_relative( $self->_canonical_name( $name ) );
-    delete $self->{_monitors}->{$name};
+  $name = $self->_make_relative( $self->_canonical_name( $name ) );
+  delete $self->{_monitors}->{$name};
 }
 
 sub scan {
-    my $self    = shift;
-    my @changed = ();
+  my $self    = shift;
+  my @changed = ();
 
-    for my $obj ( values %{ $self->{_monitors} } ) {
-        push @changed, $obj->scan;
-    }
+  for my $obj ( values %{ $self->{_monitors} } ) {
+    push @changed, $obj->scan;
+  }
 
-    for my $change ( @changed ) {
-        $self->_make_callbacks( $change );
-    }
+  for my $change ( @changed ) {
+    $self->_make_callbacks( $change );
+  }
 
-    return @changed;
+  return @changed;
 }
 
 sub _canonical_name {
-    my $self = shift;
-    my $name = shift;
-    return $self->_make_relative(
-        File::Spec->canonpath( File::Spec->rel2abs( $name ) ) );
+  my $self = shift;
+  my $name = shift;
+  return $self->_make_relative(
+    File::Spec->canonpath( File::Spec->rel2abs( $name ) ) );
 }
 
 # Make a filename (relative or absolute) relative to the base
 # directory if any.
 sub _make_relative {
-    my $self = shift;
-    my $name = shift;
+  my $self = shift;
+  my $name = shift;
 
-    if ( my $base = $self->base ) {
-        return File::Spec->abs2rel( $name, $base );
-    }
+  if ( my $base = $self->base ) {
+    return File::Spec->abs2rel( $name, $base );
+  }
 
-    return $name;
+  return $name;
 }
 
 # Make a filename relative to the base directory absolute.
 sub _make_absolute {
-    my $self = shift;
-    my $name = shift;
+  my $self = shift;
+  my $name = shift;
 
-    if ( my $base = $self->base ) {
-        return File::Spec->rel2abs( $name, $base );
-    }
+  if ( my $base = $self->base ) {
+    return File::Spec->rel2abs( $name, $base );
+  }
 
-    return $name;
+  return $name;
 }
 
 1;
