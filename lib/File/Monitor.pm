@@ -431,7 +431,7 @@ And
 
     $monitor->watch( $name, $callback );
 
-is eqivalent to
+is equivalent to
 
     $monitor->watch( {
         name        => $name
