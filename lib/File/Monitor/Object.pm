@@ -240,7 +240,7 @@ For example:
     my $file_size = $object->size;
     my $modified  = $object->mtime;
 
-If any error occured during the previous C<scan> it may be retrieved like this:
+If any error occurred during the previous C<scan> it may be retrieved like this:
 
     my $last_error = $obj->error;
 
@@ -364,7 +364,7 @@ name of the file or directory to be monitored.
 
 =item C<< A filename must be specified >>
 
-You must suppy C<new> with the name of the file or directory to be
+You must supply C<new> with the name of the file or directory to be
 monitored.
 
 =back
