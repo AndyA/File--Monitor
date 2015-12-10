@@ -16,6 +16,7 @@ my $build = MyBuilder->new(
   dist_author       => 'Andy Armstrong <andy@hexten.net>',
   dist_version_from => 'lib/File/Monitor.pm',
   requires          => {
+    'perl'       => 5.10,
     'Test::More' => 0,
     'version'    => 0,
   },
